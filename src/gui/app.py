@@ -26,7 +26,6 @@ class EcommerceApp(tk.Tk):
         self.minsize(950, 600)
         self.configure(bg="#f5f7fb")
 
-        # Existing model classes are used as they are. No model class was changed.
         self.products = [
             Product(1, "Laptop", "Dell Laptop", 25000.50, 10, "DELL001"),
             Product(2, "Wireless Mouse", "Wireless Mouse", 500.0, 25, "MOU001"),
@@ -57,16 +56,11 @@ class EcommerceApp(tk.Tk):
         style.theme_use("clam")
         style.configure("TFrame", background="#f5f7fb")
         style.configure("Card.TFrame", background="white")
-        style.configure("Title.TLabel", background="#f5f7fb", foreground="#172033",
-                        font=("Segoe UI", 28, "bold"))
-        style.configure("Subtitle.TLabel", background="#f5f7fb", foreground="#667085",
-                        font=("Segoe UI", 11))
-        style.configure("Heading.TLabel", background="#f5f7fb", foreground="#172033",
-                        font=("Segoe UI", 18, "bold"))
-        style.configure("CardTitle.TLabel", background="white", foreground="#172033",
-                        font=("Segoe UI", 14, "bold"))
-        style.configure("CardText.TLabel", background="white", foreground="#667085",
-                        font=("Segoe UI", 10))
+        style.configure("Title.TLabel", background="#f5f7fb", foreground="#172033", font=("Segoe UI", 28, "bold"))
+        style.configure("Subtitle.TLabel", background="#f5f7fb", foreground="#667085", font=("Segoe UI", 11))
+        style.configure("Heading.TLabel", background="#f5f7fb", foreground="#172033", font=("Segoe UI", 18, "bold"))
+        style.configure("CardTitle.TLabel", background="white", foreground="#172033", font=("Segoe UI", 14, "bold"))
+        style.configure("CardText.TLabel", background="white", foreground="#667085", font=("Segoe UI", 10))
         style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"), padding=(14, 9))
         style.configure("TButton", font=("Segoe UI", 10), padding=(12, 8))
         style.configure("Treeview", rowheight=34, font=("Segoe UI", 10))
@@ -123,13 +117,8 @@ class EcommerceApp(tk.Tk):
         ttk.Label(signup_frame, text="Don't have an account?", style="CardText.TLabel").pack(side="left")
         ttk.Button(signup_frame, text="Sign Up", command=self.show_signup).pack(side="left", padx=5)
 
-        demo = ttk.Frame(outer, style="Card.TFrame", padding=14)
-        demo.pack(pady=18)
-        ttk.Label(demo, text="Demo Accounts", style="CardTitle.TLabel").pack()
-        ttk.Label(demo, text="Customer: hassan@gmail.com / 1234", style="CardText.TLabel").pack(pady=2)
-        ttk.Label(demo, text="Admin: admin@ecommerce.com / admin", style="CardText.TLabel").pack(pady=2)
-
-        ttk.Button(outer, text="Exit", command=self.destroy).pack(pady=8)
+        # Passwords and account credentials are intentionally not displayed here.
+        ttk.Button(outer, text="Exit", command=self.destroy).pack(pady=20)
 
     def show_signup(self):
         self.clear_window()
@@ -176,8 +165,7 @@ class EcommerceApp(tk.Tk):
 
             new_user_id = len(all_accounts) + 1
             new_customer_id = 100 + len(self.customer_accounts) + 1
-            customer = Customer(new_user_id, name_v, email_v, password_v,
-                                phone_v, new_customer_id)
+            customer = Customer(new_user_id, name_v, email_v, password_v, phone_v, new_customer_id)
             customer.cart = Cart(new_customer_id, str(date.today()))
             customer.orders = []
             self.customer_accounts.append(customer)
@@ -185,8 +173,7 @@ class EcommerceApp(tk.Tk):
             messagebox.showinfo("Success", "Customer account created successfully.")
             self.show_login()
 
-        ttk.Button(card, text="Create Account", command=create_account,
-                   style="Accent.TButton").pack(fill="x", pady=(15, 10))
+        ttk.Button(card, text="Create Account", command=create_account, style="Accent.TButton").pack(fill="x", pady=(15, 10))
         ttk.Button(card, text="Back to Login", command=self.show_login).pack(fill="x")
 
     def logout(self):
@@ -195,42 +182,34 @@ class EcommerceApp(tk.Tk):
         self.current_user = None
         self.show_login()
 
-    # ==================== COMMON UI ====================
+    # ==================== DASHBOARDS ====================
     def header(self, title, subtitle=""):
         top = ttk.Frame(self, padding=(30, 22))
         top.pack(fill="x")
-
         left = ttk.Frame(top)
         left.pack(side="left")
         ttk.Label(left, text=title, style="Heading.TLabel").pack(anchor="w")
-        if subtitle:
-            ttk.Label(left, text=subtitle, style="Subtitle.TLabel").pack(anchor="w", pady=(2, 0))
-
+        ttk.Label(left, text=subtitle, style="Subtitle.TLabel").pack(anchor="w", pady=(2, 0))
         ttk.Button(top, text="Logout", command=self.logout).pack(side="right")
 
     def make_card(self, parent, title, description, command):
         card = ttk.Frame(parent, style="Card.TFrame", padding=20)
         ttk.Label(card, text=title, style="CardTitle.TLabel").pack(anchor="w")
-        ttk.Label(card, text=description, style="CardText.TLabel",
-                  wraplength=260).pack(anchor="w", pady=(8, 15))
+        ttk.Label(card, text=description, style="CardText.TLabel", wraplength=260).pack(anchor="w", pady=(8, 15))
         ttk.Button(card, text="Open", command=command).pack(anchor="w")
         return card
 
-    # ==================== CUSTOMER ====================
     def show_customer_dashboard(self):
         self.clear_window()
         self.header(f"Welcome, {self.current_user.name}", "Customer Dashboard")
-
-        body = ttk.Frame(self, padding=(30, 5, 30, 30))
+        body = ttk.Frame(self, padding=30)
         body.pack(fill="both", expand=True)
-
         cards = [
             ("Products", "Browse products and add items to your cart.", self.show_products),
             ("My Cart", "Review items, update quantities and checkout.", self.show_cart),
             ("My Orders", "View your previous orders.", self.show_orders),
             ("My Profile", "View and update your profile.", self.show_profile),
         ]
-
         for i, (title, desc, command) in enumerate(cards):
             row, col = divmod(i, 2)
             card = self.make_card(body, title, desc, command)
@@ -238,50 +217,49 @@ class EcommerceApp(tk.Tk):
             body.columnconfigure(col, weight=1)
             body.rowconfigure(row, weight=1)
 
+    def show_admin_dashboard(self):
+        self.clear_window()
+        self.header(f"Welcome, {self.current_user.name}", "Admin Dashboard")
+        body = ttk.Frame(self, padding=30)
+        body.pack(fill="both", expand=True)
+        cards = [
+            ("Manage Products", "Add, update and delete products.", self.show_admin_products),
+            ("Manage Orders", "View and manage customer orders.", self.show_admin_orders),
+            ("Admin Profile", "View administrator information.", self.show_admin_profile),
+        ]
+        for i, (title, desc, command) in enumerate(cards):
+            card = self.make_card(body, title, desc, command)
+            card.grid(row=0, column=i, padx=10, pady=20, sticky="nsew")
+            body.columnconfigure(i, weight=1)
+
+    # ==================== CUSTOMER PAGES ====================
     def show_products(self):
         self.clear_window()
         self.header("Products", "Browse available products")
-
         frame = ttk.Frame(self, padding=25)
         frame.pack(fill="both", expand=True)
-
-        tree = ttk.Treeview(frame, columns=("id", "name", "description", "price", "stock", "sku"),
-                            show="headings")
-        for col, text in [("id", "ID"), ("name", "Product"), ("description", "Description"),
-                          ("price", "Price"), ("stock", "Stock"), ("sku", "SKU")]:
+        tree = ttk.Treeview(frame, columns=("id", "name", "description", "price", "stock", "sku"), show="headings")
+        for col, text in [("id", "ID"), ("name", "Product"), ("description", "Description"), ("price", "Price"), ("stock", "Stock"), ("sku", "SKU")]:
             tree.heading(col, text=text)
-        tree.column("id", width=55)
-        tree.column("name", width=170)
-        tree.column("description", width=260)
-        tree.column("price", width=110)
-        tree.column("stock", width=80)
-        tree.column("sku", width=100)
         tree.pack(fill="both", expand=True)
-
-        for product in self.products:
-            tree.insert("", "end", iid=str(product.productId), values=(
-                product.productId, product.name, product.description,
-                f"{product.price:.2f}", product.stock, product.sku))
+        for p in self.products:
+            tree.insert("", "end", iid=str(p.productId), values=(p.productId, p.name, p.description, f"{p.price:.2f}", p.stock, p.sku))
 
         def add_selected():
             selection = tree.selection()
             if not selection:
                 messagebox.showwarning("Product", "Please select a product first.")
                 return
-
             product = next(p for p in self.products if str(p.productId) == selection[0])
             if not product.isAvailable():
                 messagebox.showwarning("Stock", "This product is out of stock.")
                 return
-
-            quantity = simpledialog.askinteger("Quantity", "Enter quantity:",
-                                               initialvalue=1, minvalue=1)
+            quantity = simpledialog.askinteger("Quantity", "Enter quantity:", initialvalue=1, minvalue=1)
             if quantity is None:
                 return
             if quantity > product.stock:
                 messagebox.showwarning("Stock", "Not enough stock available.")
                 return
-
             item = CartItem(quantity, product.price)
             item.product = product
             self.current_user.cart.addItem(item)
@@ -290,39 +268,27 @@ class EcommerceApp(tk.Tk):
 
         controls = ttk.Frame(frame)
         controls.pack(fill="x", pady=15)
-        ttk.Button(controls, text="Add to Cart", command=add_selected,
-                   style="Accent.TButton").pack(side="left")
+        ttk.Button(controls, text="Add to Cart", command=add_selected, style="Accent.TButton").pack(side="left")
         ttk.Button(controls, text="Back", command=self.show_customer_dashboard).pack(side="right")
 
     def calculate_cart_total(self):
-        self.current_user.cart.totalAmount = sum(
-            item.calculateSubtotal() for item in self.current_user.cart.items
-        )
+        self.current_user.cart.totalAmount = sum(item.calculateSubtotal() for item in self.current_user.cart.items)
         return self.current_user.cart.totalAmount
 
     def show_cart(self):
         self.clear_window()
         self.header("My Cart", "Review and manage your items")
         self.calculate_cart_total()
-
         frame = ttk.Frame(self, padding=25)
         frame.pack(fill="both", expand=True)
-
         tree = ttk.Treeview(frame, columns=("product", "quantity", "unit", "subtotal"), show="headings")
-        for col, text in [("product", "Product"), ("quantity", "Quantity"),
-                          ("unit", "Unit Price"), ("subtotal", "Subtotal")]:
+        for col, text in [("product", "Product"), ("quantity", "Quantity"), ("unit", "Unit Price"), ("subtotal", "Subtotal")]:
             tree.heading(col, text=text)
         tree.pack(fill="both", expand=True)
-
         for index, item in enumerate(self.current_user.cart.items):
             product = getattr(item, "product", None)
-            name = product.name if product else "Product"
-            tree.insert("", "end", iid=str(index), values=(
-                name, item.quantity, f"{item.unitPrice:.2f}",
-                f"{item.calculateSubtotal():.2f}"))
-
-        ttk.Label(frame, text=f"Total: {self.current_user.cart.getTotal():.2f}",
-                  style="Heading.TLabel").pack(anchor="e", pady=12)
+            tree.insert("", "end", iid=str(index), values=(product.name if product else "Product", item.quantity, f"{item.unitPrice:.2f}", f"{item.calculateSubtotal():.2f}"))
+        ttk.Label(frame, text=f"Total: {self.current_user.cart.getTotal():.2f}", style="Heading.TLabel").pack(anchor="e", pady=12)
 
         def selected_item():
             selection = tree.selection()
@@ -341,8 +307,7 @@ class EcommerceApp(tk.Tk):
             item = selected_item()
             if not item:
                 return
-            quantity = simpledialog.askinteger("Quantity", "New quantity:",
-                                               initialvalue=item.quantity, minvalue=1)
+            quantity = simpledialog.askinteger("Quantity", "New quantity:", initialvalue=item.quantity, minvalue=1)
             if quantity is not None:
                 item.updateQuantity(quantity)
                 self.calculate_cart_total()
@@ -352,30 +317,21 @@ class EcommerceApp(tk.Tk):
             if not self.current_user.cart.items:
                 messagebox.showwarning("Checkout", "Your cart is empty.")
                 return
-
             self.calculate_cart_total()
-            order_id = len(self.orders) + 1
-            order = Order(order_id, str(date.today()), "Pending")
+            order = Order(len(self.orders) + 1, str(date.today()), "Pending")
             order.items = []
             order.total = self.current_user.cart.totalAmount
-
             for item in self.current_user.cart.items:
                 order_item = OrderItem(item.quantity, item.unitPrice)
                 order_item.calculateSubtotal()
                 order_item.product = getattr(item, "product", None)
                 order.items.append(order_item)
-
                 product = getattr(item, "product", None)
                 if product:
                     product.stock -= item.quantity
-
             self.orders.append(order)
             self.current_user.orders.append(order)
-
-            payment = Payment(len(self.payments) + 1, order.total,
-                              str(date.today()), "Pending", "Cash")
-            self.payments.append(payment)
-
+            self.payments.append(Payment(len(self.payments) + 1, order.total, str(date.today()), "Pending", "Cash"))
             self.current_user.cart.clearCart()
             messagebox.showinfo("Checkout", f"Order #{order.orderId} created successfully.")
             self.show_orders()
@@ -384,152 +340,95 @@ class EcommerceApp(tk.Tk):
         controls.pack(fill="x")
         ttk.Button(controls, text="Update Quantity", command=update_selected).pack(side="left", padx=4)
         ttk.Button(controls, text="Remove", command=remove_selected).pack(side="left", padx=4)
-        ttk.Button(controls, text="Checkout", command=checkout,
-                   style="Accent.TButton").pack(side="left", padx=4)
+        ttk.Button(controls, text="Checkout", command=checkout, style="Accent.TButton").pack(side="left", padx=4)
         ttk.Button(controls, text="Back", command=self.show_customer_dashboard).pack(side="right")
 
     def show_orders(self):
         self.clear_window()
-        self.header("My Orders", "Your order history")
-
+        self.header("My Orders", "Track your orders")
         frame = ttk.Frame(self, padding=25)
         frame.pack(fill="both", expand=True)
-
         tree = ttk.Treeview(frame, columns=("id", "date", "status", "total"), show="headings")
-        for col, text in [("id", "Order ID"), ("date", "Date"),
-                          ("status", "Status"), ("total", "Total")]:
+        for col, text in [("id", "Order ID"), ("date", "Date"), ("status", "Status"), ("total", "Total")]:
             tree.heading(col, text=text)
         tree.pack(fill="both", expand=True)
-
         for order in self.current_user.orders:
-            tree.insert("", "end", values=(order.orderId, order.orderDate,
-                                             order.status, f"{order.total:.2f}"))
+            tree.insert("", "end", values=(order.orderId, order.orderDate, order.status, f"{order.total:.2f}"))
 
         def cancel_selected():
             selection = tree.selection()
             if not selection:
-                messagebox.showwarning("Orders", "Please select an order first.")
+                messagebox.showwarning("Order", "Please select an order first.")
                 return
             order_id = int(tree.item(selection[0], "values")[0])
             order = next(o for o in self.current_user.orders if o.orderId == order_id)
-            if order.status == "Pending":
-                order.status = "Cancelled"
-                messagebox.showinfo("Order", "Order cancelled successfully.")
+            if order.status.lower() == "pending":
+                order.canceledOrder()
                 self.show_orders()
             else:
                 messagebox.showwarning("Order", "Only pending orders can be cancelled.")
 
-        controls = ttk.Frame(frame)
-        controls.pack(fill="x", pady=15)
-        ttk.Button(controls, text="Cancel Selected", command=cancel_selected).pack(side="left")
-        ttk.Button(controls, text="Back", command=self.show_customer_dashboard).pack(side="right")
+        ttk.Button(frame, text="Cancel Selected", command=cancel_selected).pack(side="left", pady=15)
+        ttk.Button(frame, text="Back", command=self.show_customer_dashboard).pack(side="right", pady=15)
 
     def show_profile(self):
         self.clear_window()
-        self.header("My Profile", "Customer information")
-
+        self.header("My Profile", "Customer account information")
         frame = ttk.Frame(self, padding=35)
         frame.pack(fill="both", expand=True)
-        customer = self.current_user
-
-        info = [
-            ("Customer ID", customer.customerId),
-            ("Name", customer.name),
-            ("Email", customer.email),
-            ("Phone", customer.phone),
-            ("Loyalty Points", customer.loyaltyPoints),
-        ]
-        for label, value in info:
-            ttk.Label(frame, text=f"{label}: {value}", style="Heading.TLabel").pack(anchor="w", pady=7)
-
-        def update_profile():
-            customer.updateProfile()
-            self.show_profile()
-
-        ttk.Button(frame, text="Update Profile", command=update_profile,
-                   style="Accent.TButton").pack(side="left", pady=20)
+        c = self.current_user
+        for label, value in [("Customer ID", c.customerId), ("Name", c.name), ("Email", c.email), ("Phone", c.phone), ("Loyalty Points", c.loyaltyPoints)]:
+            ttk.Label(frame, text=f"{label}: {value}", style="Heading.TLabel").pack(anchor="w", pady=8)
+        ttk.Button(frame, text="Update Profile", command=c.updateProfile).pack(side="left", pady=20)
         ttk.Button(frame, text="Back", command=self.show_customer_dashboard).pack(side="right", pady=20)
 
-    # ==================== ADMIN ====================
-    def show_admin_dashboard(self):
-        self.clear_window()
-        self.header(f"Welcome, {self.current_user.name}", "Admin Dashboard")
-
-        body = ttk.Frame(self, padding=30)
-        body.pack(fill="both", expand=True)
-
-        cards = [
-            ("Manage Products", "Add, update and delete products.", self.show_admin_products),
-            ("Manage Orders", "View customer orders and update their status.", self.show_admin_orders),
-            ("Admin Profile", "View administrator information.", self.show_admin_profile),
-        ]
-
-        for i, (title, desc, command) in enumerate(cards):
-            card = self.make_card(body, title, desc, command)
-            card.grid(row=0, column=i, padx=10, pady=20, sticky="nsew")
-            body.columnconfigure(i, weight=1)
-
+    # ==================== ADMIN PAGES ====================
     def show_admin_products(self):
         self.clear_window()
         self.header("Manage Products", "Administrator product management")
-
         frame = ttk.Frame(self, padding=25)
         frame.pack(fill="both", expand=True)
-
         tree = ttk.Treeview(frame, columns=("id", "name", "price", "stock", "sku"), show="headings")
-        for col, text in [("id", "ID"), ("name", "Product"), ("price", "Price"),
-                          ("stock", "Stock"), ("sku", "SKU")]:
+        for col, text in [("id", "ID"), ("name", "Product"), ("price", "Price"), ("stock", "Stock"), ("sku", "SKU")]:
             tree.heading(col, text=text)
         tree.pack(fill="both", expand=True)
 
         def refresh():
-            for item in tree.get_children():
-                tree.delete(item)
-            for product in self.products:
-                tree.insert("", "end", iid=str(product.productId), values=(
-                    product.productId, product.name, f"{product.price:.2f}",
-                    product.stock, product.sku))
+            for row in tree.get_children():
+                tree.delete(row)
+            for p in self.products:
+                tree.insert("", "end", iid=str(p.productId), values=(p.productId, p.name, f"{p.price:.2f}", p.stock, p.sku))
+        refresh()
 
-        def selected_product():
+        def selected():
             selection = tree.selection()
             if not selection:
-                messagebox.showwarning("Products", "Please select a product first.")
+                messagebox.showwarning("Product", "Please select a product first.")
                 return None
             return next(p for p in self.products if str(p.productId) == selection[0])
 
         def add_product():
-            product_id = max([p.productId for p in self.products], default=0) + 1
-            name = simpledialog.askstring("Product", "Product name:")
-            if not name:
-                return
-            description = simpledialog.askstring("Product", "Description:") or ""
-            price = simpledialog.askfloat("Product", "Price:", minvalue=0)
-            stock = simpledialog.askinteger("Product", "Stock:", minvalue=0)
-            if price is None or stock is None:
-                return
-            sku = f"SKU{product_id:03d}"
-            product = Product(product_id, name, description, price, stock, sku)
+            pid = max((p.productId for p in self.products), default=0) + 1
+            product = Product(pid, "New Product", "Product description", 0.0, 0, f"SKU{pid:03d}")
             self.products.append(product)
             self.current_user.addProduct(product)
             refresh()
 
         def update_product():
-            product = selected_product()
+            product = selected()
             if not product:
                 return
-            new_price = simpledialog.askfloat("Update Price", "New price:",
-                                              initialvalue=product.price, minvalue=0)
-            new_stock = simpledialog.askinteger("Update Stock", "New stock:",
-                                                initialvalue=product.stock, minvalue=0)
-            if new_price is not None:
-                product.updatePrice(new_price)
-            if new_stock is not None:
-                product.updateStock(new_stock)
+            price = simpledialog.askfloat("Price", "New price:", initialvalue=product.price, minvalue=0)
+            if price is not None:
+                product.updatePrice(price)
+            stock = simpledialog.askinteger("Stock", "New stock:", initialvalue=product.stock, minvalue=0)
+            if stock is not None:
+                product.updateStock(stock)
             self.current_user.updateProduct(product)
             refresh()
 
         def delete_product():
-            product = selected_product()
+            product = selected()
             if not product:
                 return
             if messagebox.askyesno("Delete Product", f"Delete {product.name}?"):
@@ -537,12 +436,9 @@ class EcommerceApp(tk.Tk):
                 self.current_user.deleteProduct(product)
                 refresh()
 
-        refresh()
-
         controls = ttk.Frame(frame)
         controls.pack(fill="x", pady=15)
-        ttk.Button(controls, text="Add Product", command=add_product,
-                   style="Accent.TButton").pack(side="left", padx=4)
+        ttk.Button(controls, text="Add Product", command=add_product, style="Accent.TButton").pack(side="left", padx=4)
         ttk.Button(controls, text="Update", command=update_product).pack(side="left", padx=4)
         ttk.Button(controls, text="Delete", command=delete_product).pack(side="left", padx=4)
         ttk.Button(controls, text="Back", command=self.show_admin_dashboard).pack(side="right")
@@ -550,67 +446,26 @@ class EcommerceApp(tk.Tk):
     def show_admin_orders(self):
         self.clear_window()
         self.header("Manage Orders", "Administrator order management")
-
         frame = ttk.Frame(self, padding=25)
         frame.pack(fill="both", expand=True)
-
-        tree = ttk.Treeview(frame, columns=("id", "customer", "date", "status", "total"), show="headings")
-        for col, text in [("id", "Order ID"), ("customer", "Customer"),
-                          ("date", "Date"), ("status", "Status"), ("total", "Total")]:
+        tree = ttk.Treeview(frame, columns=("id", "customer", "status", "total"), show="headings")
+        for col, text in [("id", "Order ID"), ("customer", "Customer"), ("status", "Status"), ("total", "Total")]:
             tree.heading(col, text=text)
         tree.pack(fill="both", expand=True)
-
         for customer in self.customer_accounts:
-            for order in getattr(customer, "orders", []):
-                tree.insert("", "end", iid=f"{customer.customerId}-{order.orderId}", values=(
-                    order.orderId, customer.name, order.orderDate,
-                    order.status, f"{order.total:.2f}"))
+            for order in customer.orders:
+                tree.insert("", "end", values=(order.orderId, customer.name, order.status, f"{order.total:.2f}"))
 
-        def update_status():
-            selection = tree.selection()
-            if not selection:
-                messagebox.showwarning("Orders", "Please select an order first.")
-                return
-
-            values = tree.item(selection[0], "values")
-            order_id = int(values[0])
-            customer_name = values[1]
-            customer = next(c for c in self.customer_accounts if c.name == customer_name)
-            order = next(o for o in customer.orders if o.orderId == order_id)
-
-            status = simpledialog.askstring(
-                "Order Status",
-                "Enter status (Pending, Processing, Shipped, Delivered, Cancelled):",
-                initialvalue=order.status
-            )
-            if status:
-                order.status = status
-                tree.item(selection[0], values=(order.orderId, customer.name,
-                                                order.orderDate, order.status,
-                                                f"{order.total:.2f}"))
-
-        ttk.Button(frame, text="Update Status", command=update_status,
-                   style="Accent.TButton").pack(side="left", pady=15)
         ttk.Button(frame, text="Back", command=self.show_admin_dashboard).pack(side="right", pady=15)
 
     def show_admin_profile(self):
         self.clear_window()
-        self.header("Admin Profile", "Administrator information")
-
+        self.header("Admin Profile", "Administrator account information")
         frame = ttk.Frame(self, padding=35)
         frame.pack(fill="both", expand=True)
-        admin = self.current_user
-
-        info = [
-            ("Admin ID", admin.adminId),
-            ("Name", admin.name),
-            ("Email", admin.email),
-            ("Phone", admin.phone),
-            ("Role", admin.role),
-        ]
-        for label, value in info:
-            ttk.Label(frame, text=f"{label}: {value}", style="Heading.TLabel").pack(anchor="w", pady=7)
-
+        a = self.current_user
+        for label, value in [("Admin ID", a.adminId), ("Name", a.name), ("Email", a.email), ("Phone", a.phone), ("Role", a.role)]:
+            ttk.Label(frame, text=f"{label}: {value}", style="Heading.TLabel").pack(anchor="w", pady=8)
         ttk.Button(frame, text="Back", command=self.show_admin_dashboard).pack(side="right", pady=20)
 
 
